@@ -6,3 +6,6 @@ curl -X POST -H "Content-Type: application/json"      -d '{"prompt": "a knight l
 
 for fetching -> 
 curl "http://127.0.0.1:5000/api/fetch?query=tokyo+street&device=mobile" -o tokyo_mobile.jpg
+
+
+wallpaperBot_local is for running stability diffusion model on local machine

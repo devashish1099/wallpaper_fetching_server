@@ -11,9 +11,6 @@ STABILITY_API_KEY = os.environ.get('STABILITY_API_KEY','--')
 # HF_API_KEY = os.environ.get("HF_API_TOKEN")
 # STABLE_DIFFUSION_API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 
-GENERATED_IMG_DIR = 'generated_wallpapers'
-os.makedirs(GENERATED_IMG_DIR, exist_ok=True)
-
 def fetch_from_pexels(query : str, device_type : str):
     orientation = 'portrait' if device_type == 'mobile' else 'landscape'
     headers = {'Authorization': PEXELS_API_KEY}
@@ -24,12 +21,6 @@ def fetch_from_pexels(query : str, device_type : str):
         data = response.json()
         if data['photos']:
             photo = data['photos'][0]
-            # return {
-            #     "success": True,
-            #     "source": "Pexels",
-            #     "photographer": photo['photographer'],
-            #     "url": photo['src']['original'] # The most important part!
-            # }
             image_url = photo['src']['original']
             image_response = requests.get(image_url)
             image_response.raise_for_status()
@@ -115,10 +106,6 @@ def generate_wallpaper():
         return jsonify(result), 503
     if result:
         return send_file(result,mimetype='image/jpeg')
-
-@app.route('/generated_img/<path:filename>')
-def serve_generated_image(filename):
-     return send_from_directory(GENERATED_IMG_DIR.replace('static/', ''), filename)
 
 if __name__ =='__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
