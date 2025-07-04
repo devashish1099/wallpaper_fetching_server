@@ -21,7 +21,7 @@ try:
         pipe = pipe.to("cuda")
         pipe.enable_attention_slicing()
     elif torch.backends.mps.is_available():
-        pipe = StableDiffusionPipeline.from_pretrained(
+        pipe = DiffusionPipeline.from_pretrained(
             MODEL_ID,
             scheduler=scheduler,
             torch_dtype=torch.float32
@@ -66,7 +66,7 @@ def generate_locally(prompt: str, device_type: str):
             os.makedirs(OUTPUT_DIR)
 
         safe_filename = "".join([c for c in prompt if c.isalnum() or c in " _-"]).rstrip()[:60]
-        image_path = os.path.join(OUTPUT_DIR, f"{safe_filename}.png")
+        image_path = os.path.join(OUTPUT_DIR, f"{safe_filename}_{device_type}.png")
 
         image.save(image_path)
     except Exception as e:
