@@ -15,6 +15,9 @@ I have uploaded a few examples from model = stabilityai/stable-diffusion-2 in th
 <br/>
 ![example 2](examples/cinematic_view_of_a_sunset.png) <br/>
 <br/>
+Created by model = stabilityai/stable-diffusion-xl-base-1.0 for mobile <br/>
+![example 3](examples/sunrise_on_a_mountain_mobile.png) <br/>
+<br/>
 You Can also try other stable-diffusion models based on your machine like -> <br/>
 stabilityai/stable-diffusion-2-1 <br/>
 stabilityai/stable-diffusion-xl-base-1.0 <br/>
