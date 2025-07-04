@@ -10,10 +10,9 @@ MODEL_ID = "stabilityai/stable-diffusion-2"
 OUTPUT_DIR = "generated_images"
 
 pipe = None
-
-if torch.cuda.is_available():
-    try:
-        scheduler = EulerDiscreteScheduler.from_pretrained(MODEL_ID, subfolder="scheduler")
+try:
+    scheduler = EulerDiscreteScheduler.from_pretrained(MODEL_ID, subfolder="scheduler")
+    if torch.cuda.is_available():
         pipe = StableDiffusionPipeline.from_pretrained(
             MODEL_ID,
             scheduler=scheduler,
@@ -21,11 +20,25 @@ if torch.cuda.is_available():
         )
         pipe = pipe.to("cuda")
         pipe.enable_attention_slicing()
-    except Exception as e:
-        pipe = None
-        print(f"loading the model error: {e}")
-else:
-    print("WARNING: No GPU detected. AI generation will be disabled.")
+    elif torch.backends.mps.is_available():
+        pipe = StableDiffusionPipeline.from_pretrained(
+            MODEL_ID,
+            scheduler=scheduler,
+            torch_dtype=torch.float32
+        )
+        pipe = pipe.to("mps")
+        pipe.enable_attention_slicing()
+    else:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            MODEL_ID,
+            scheduler=scheduler,
+            torch_dtype=torch.float32
+        ).to("cpu")
+        pipe.enable_attention_slicing()
+        print("WARNING: No GPU detected. AI generation will be disabled.")
+except Exception as e:
+    pipe = None
+    print(f"Error loading the model: {e}")
 
 def get_dimensions(device_type='pc'):
     if device_type == 'mobile':
@@ -38,7 +51,7 @@ def generate_locally(prompt: str, device_type: str):
 
     width, height = get_dimensions(device_type)
     try:
-        enhanced_prompt = f"({prompt}), cinematic, stunning, high detail, 8k, photorealistic"
+        enhanced_prompt = f"({prompt}), cinematic, stunning, high detail, 4k, photorealistic"
         negative_prompt = "blurry, cartoon, drawing, deformed, ugly, low quality"
         image = pipe(
             prompt=enhanced_prompt,
